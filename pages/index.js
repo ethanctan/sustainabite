@@ -3,7 +3,7 @@ import styles from '../styles/Home.module.css';
 import Link from 'next/link';
 import { useQuery } from "../convex/_generated/react";
 import { useMutation } from "../convex/_generated/react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 export default function Home() {
 
@@ -53,6 +53,34 @@ export default function Home() {
     await postPost( storageId, postName, postDesc, "10", "test username" ) // change this later
   }
 
+  // Flask backend test (flask to nextjs)
+
+    const [datas, setdatas] = useState({
+        name: "",
+        age: 0,
+        date: "",
+        programming: "",
+    });
+  
+    // Using useEffect for single rendering
+    useEffect(() => {
+        // Using fetch to fetch the api from 
+        // flask server it will be redirected to proxy
+        fetch("http://127.0.0.1:5000/").then((res) =>
+            res.json().then((datas) => {
+                // Setting a data from api
+                setdatas({
+                    name: datas.Name,
+                    age: datas.Age,
+                    date: datas.Date,
+                    programming: datas.programming,
+                });
+            })
+        );
+    }, []);
+    
+  // end test
+
   return (
       <div className={styles.container}>
         <Head>
@@ -60,6 +88,12 @@ export default function Home() {
           <link rel="icon" href="/favicon.ico" />
         </Head> 
         <div>
+                <p>API TEST</p>
+                <p>{datas.name}</p>
+                <p>{datas.age}</p>
+                <p>{datas.date}</p>
+                <p>{datas.programming}</p>
+
           <button onClick={sendHello}>CONVEX TEST</button>
 
           
