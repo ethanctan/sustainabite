@@ -3,7 +3,8 @@ import styles from '../styles/Home.module.css';
 import { useQuery } from "../convex/_generated/react";
 import { useMutation } from "../convex/_generated/react";
 import { useRef, useState, useEffect } from "react";
-import "./_app.js";
+
+var user;
 
 export default function Login() {
 
@@ -13,7 +14,6 @@ export default function Login() {
     const [password1, setPassword1] = useState("");
     const register = useMutation("register");
     const login = useQuery("login", username1, password1);
-    var user;
 
     async function handleRegister(event) {
         event.preventDefault();
@@ -84,5 +84,6 @@ export default function Login() {
     );
   }
 
+export { user };
 
 // Register & Login

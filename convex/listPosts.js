@@ -1,7 +1,11 @@
 import { query } from "./_generated/server";
 
-export default query(async ({ db }, name, desc, username ) => {
-      return await db.query("posts").collect();
+export default query(async ({ db, storage }, name, desc, username ) => {
+    const posts = await db.query("posts").collect();
+    for (const post of posts) {
+      post.url = await storage.getUrl(post.image)
+    }
+      return posts;
     });
 
 

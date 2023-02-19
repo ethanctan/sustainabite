@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useQuery } from "../convex/_generated/react";
 import { useMutation } from "../convex/_generated/react";
 import { useRef, useState, useEffect } from "react";
+import "./login.js";
 
 export default function Home() {
 
@@ -17,41 +18,13 @@ export default function Home() {
   const postPost = useMutation("submitPost:postPost");
   const data = useQuery("listMessages");
   const sendMessage = useMutation("sendMessage");
-  const listPosts = useQuery("listPosts");
+  const listPosts = useQuery("listPosts") || [];
   const searchUsers = useMutation("searchUsers");
   const listFriends = useMutation("listFriends");
   const addFriend = useMutation("addFriend");
 
   const sendHello = () => sendMessage("Hello!", "me");
   console.log(listPosts); //testing
-
-  async function handlePost(event) {
-
-    event.preventDefault();
-    setSelectedImage(null);
-    imageInput.current.value = "";
-  
-    // Text
-    setPostName("");
-    setPostDesc("");
-  
-    // Images
-  
-    // Step 1: Get a short-lived upload URL
-    const postUrl = await generateUploadUrl();
-  
-    // Step 2: POST the file to the URL
-    const result = await fetch(postUrl, {
-      method: "POST",
-      headers: { "Content-Type": selectedImage.type },
-      body: selectedImage,
-    });
-    const { storageId } = await result.json();
-  
-    // Step 3: Submit post
-    console.log( storageId, postName, postDesc, "10", "test username" );
-    await postPost( storageId, postName, postDesc, "10", "test username" ) // change this later
-  }
 
   // Flask backend test (flask to nextjs)
 
@@ -93,41 +66,18 @@ export default function Home() {
                 <p>{datas.age}</p>
                 <p>{datas.date}</p>
                 <p>{datas.programming}</p>
-
-          <button onClick={sendHello}>CONVEX TEST</button>
-
-          
-          <form onSubmit={handlePost}>
-
-            <input
-              type="text"
-              value={postName}
-              onChange={event => setPostName(event.target.value)}
-              placeholder="Post Title:"
-            />
-
-            <input
-              type="text"
-              value={postDesc}
-              onChange={event => setPostDesc(event.target.value)}
-              placeholder="Write a Description!"
-            />
-
-            <input
-              type="file"
-              accept="image/*"
-              ref={imageInput}
-              onChange={event => setSelectedImage(event.target.files[0])}
-              className="ms-2 btn btn-primary"
-            />
-
-            <input type="submit" value="Send"/>
-
-          </form>
-
-
         </div>
         <main>
+        <ul>
+        {listPosts.map(post => (
+          <li key={post._id.toString()}>
+            <span>{post.name}:</span>
+            <span>{post.desc}</span>
+            <span>{new Date(post._creationTime).toLocaleTimeString()}</span>
+            <img src={post.url} height="300px" width="auto" />
+          </li>
+        ))}
+      </ul>
           <h1 className={styles.title}>
             Welcome to <a href="https://nextjs.org">Next.js!</a>
           </h1>
